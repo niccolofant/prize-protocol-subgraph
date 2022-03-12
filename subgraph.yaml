@@ -1,0 +1,59 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: CompoundPrizeLottery
+    network: rinkeby
+    source:
+      address: "0xdd36B97dEFe96515fA2463b235dc237474ddE17f"
+      abi: CompoundPrizeLottery
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - ControllerRoleTransferred
+        - LotteryStarted
+        - LotteryWinnerAwarded
+        - OwnershipTransferred
+        - PlayerDeposited
+        - PlayerRedeemed
+        - RandomNumberReceived
+        - RandomNumberRequested
+        - RedeemedFromCompound
+        - RedeemedUnderlyingFromCompound
+        - ReserveSupplied
+        - StateChanged
+        - SuppliedToCompound
+      abis:
+        - name: CompoundPrizeLottery
+          file: ./abis/CompoundPrizeLottery.json
+      eventHandlers:
+        - event: ControllerRoleTransferred(indexed address,indexed address)
+          handler: handleControllerRoleTransferred
+        - event: LotteryStarted(indexed uint256,uint256,address,address)
+          handler: handleLotteryStarted
+        - event: LotteryWinnerAwarded(indexed uint256,indexed address,uint256,uint256)
+          handler: handleLotteryWinnerAwarded
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PlayerDeposited(indexed uint256,indexed address,uint256)
+          handler: handlePlayerDeposited
+        - event: PlayerRedeemed(indexed uint256,indexed address,uint256)
+          handler: handlePlayerRedeemed
+        - event: RandomNumberReceived(indexed uint256,uint64,uint256)
+          handler: handleRandomNumberReceived
+        - event: RandomNumberRequested(indexed uint256,uint64,uint256)
+          handler: handleRandomNumberRequested
+        - event: RedeemedFromCompound(indexed address,uint256)
+          handler: handleRedeemedFromCompound
+        - event: RedeemedUnderlyingFromCompound(indexed address,uint256)
+          handler: handleRedeemedUnderlyingFromCompound
+        - event: ReserveSupplied(indexed uint256,uint256)
+          handler: handleReserveSupplied
+        - event: StateChanged(indexed uint256,uint8,uint8)
+          handler: handleStateChanged
+        - event: SuppliedToCompound(indexed address,indexed address,uint256)
+          handler: handleSuppliedToCompound
+      file: ./src/mapping.ts

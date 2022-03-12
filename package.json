@@ -1,0 +1,16 @@
+{
+  "name": "prize-protocol-subgraph",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ prize-protocol-subgraph",
+    "create-local": "graph create --node http://localhost:8020/ prize-protocol-subgraph",
+    "remove-local": "graph remove --node http://localhost:8020/ prize-protocol-subgraph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 prize-protocol-subgraph"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.27.0",
+    "@graphprotocol/graph-ts": "0.24.1"
+  }
+}
