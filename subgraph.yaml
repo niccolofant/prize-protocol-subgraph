@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,10 +8,12 @@ dataSources:
     source:
       address: "0xdd36B97dEFe96515fA2463b235dc237474ddE17f"
       abi: CompoundPrizeLottery
+      startBlock: 10300000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
+      file: ./src/mappings/core.ts
       entities:
         - ControllerRoleTransferred
         - LotteryStarted
@@ -46,14 +48,7 @@ dataSources:
           handler: handleRandomNumberReceived
         - event: RandomNumberRequested(indexed uint256,uint64,uint256)
           handler: handleRandomNumberRequested
-        - event: RedeemedFromCompound(indexed address,uint256)
-          handler: handleRedeemedFromCompound
-        - event: RedeemedUnderlyingFromCompound(indexed address,uint256)
-          handler: handleRedeemedUnderlyingFromCompound
         - event: ReserveSupplied(indexed uint256,uint256)
           handler: handleReserveSupplied
         - event: StateChanged(indexed uint256,uint8,uint8)
           handler: handleStateChanged
-        - event: SuppliedToCompound(indexed address,indexed address,uint256)
-          handler: handleSuppliedToCompound
-      file: ./src/mapping.ts

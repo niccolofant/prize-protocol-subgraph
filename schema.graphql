@@ -1,6 +1,154 @@
-type ExampleEntity @entity {
+enum State {
+  Open
+  Closed
+  Awarding_Winner
+  Randomness_Fulfilled
+}
+
+type PrizeProtocol @entity {
+  # ID: set to 1
   id: ID!
-  count: BigInt!
-  oldController: Bytes! # address
-  newController: Bytes! # address
+  # Address of the protocol
+  address: Bytes!
+  # Name
+  name: String!
+  # Address of the owner
+  owner: Bytes!
+  # Address of the controller
+  controller: Bytes!
+  # Drawing period
+  drawingPeriod: BigInt!
+  # Minimum deposit
+  minimumDeposit: BigInt!
+
+  # ==================== Tokens ====================
+
+  # Token address
+  token: Bytes!
+  # Token name
+  tokenName: String!
+  # Token symbol
+  tokenSymbol: String!
+  # cToken address
+  cToken: Bytes!
+  # cToken name
+  cTokenName: String!
+  # cToken symbol
+  cTokenSymbol: String!
+  # Native Token (PRZ) address
+  nativeToken: Bytes!
+  # Native Token (PRZ) name
+  nativeTokenName: String!
+  # Native Token (PRZ) symbol
+  nativeTokenSymbol: String!
+  # Ticket address
+  ticket: Bytes!
+  # Ticket name
+  ticketName: String!
+  # Ticket symbol
+  ticketSymbol: String!
+
+  # ================================================
+
+  # Amount deposited
+  amountDeposited: BigInt!
+  # Reserve
+  reserve: BigInt!
+  # Prize Pool
+  prizePool: BigInt!
+  # Lotteries
+  lotteries: [Lottery!]! @derivedFrom(field: "protocol")
+  # Players
+  players: [Player!] @derivedFrom(field: "protocol")
+  # Winners
+  wins: [Win!] @derivedFrom(field: "protocol")
+}
+
+type Lottery @entity {
+  # ID: `${lotteryId}`
+  id: ID!
+  # Protocol
+  protocol: PrizeProtocol!
+  # State
+  state: State!
+  # Timestamp of the start of the lottery run
+  startTimestamp: BigInt!
+  # Timestamp of the end of the lottery run
+  endTimestamp: BigInt
+  # Amount deposited
+  amountDeposited: BigInt!
+  # Reserve
+  reserve: BigInt!
+  # Prize Pool
+  prizePool: BigInt!
+  # Winner
+  win: Win
+  # Players
+  players: [Player!] @derivedFrom(field: "lottery")
+  # Deposits
+  deposits: [Deposit!] @derivedFrom(field: "lottery")
+  # Redeems
+  redeems: [Redeem!] @derivedFrom(field: "lottery")
+}
+
+type Player @entity {
+  # ID: `${player.address}`
+  id: ID!
+  # Address of the player
+  address: Bytes!
+  # Protocol
+  protocol: PrizeProtocol!
+  # Lottery entered
+  lottery: Lottery!
+  # Every deposit
+  deposits: [Deposit!]! @derivedFrom(field: "from")
+  # Every redeem
+  redeems: [Redeem!] @derivedFrom(field: "from")
+  # Ticket balance
+  balance: BigInt!
+}
+
+type Deposit @entity {
+  # ID: `${transaction.hash}`
+  id: ID!
+  # Timestamp
+  timestamp: BigInt!
+  # Protocol
+  protocol: PrizeProtocol!
+  # Lottery where the deposit happened
+  lottery: Lottery!
+  # Address of the player that deposited
+  from: Player!
+  # Amount of tokens deposited and tickets minted
+  amount: BigInt!
+}
+
+type Redeem @entity {
+  # ID: `${transaction.hash}`
+  id: ID!
+  # Timestamp
+  timestamp: BigInt!
+  # Protocol
+  protocol: PrizeProtocol!
+  # Lottery where the redeem happened
+  lottery: Lottery!
+  # Address of the player that redeemed
+  from: Player!
+  # Amount of tokens redeemed and tickets burned
+  amount: BigInt!
+}
+
+type Win @entity {
+  # ID: `${transaction.hash}`
+  id: ID!
+  # Timestamp
+  timestamp: BigInt!
+  # Winner
+  winner: Player!
+  # Amount
+  amount: BigInt!
+  # Protocol
+  protocol: PrizeProtocol!
+  # Lottery
+  lottery: Lottery!
 }
