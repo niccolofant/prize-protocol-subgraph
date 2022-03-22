@@ -21,13 +21,18 @@ import { loadOrCreateRedeem } from "../utils/loadOrCreateRedeem";
 import { loadOrCreateWin } from "../utils/loadOrCreateWin";
 
 export function handleLotteryStarted(event: LotteryStarted): void {
+  const contract = CompoundPrizeLottery.bind(event.address);
   const protocol = loadOrCreateProtocol();
   const lottery = loadOrCreateLottery(event.params.lotteryId.toString());
+
+  protocol.prizePool = contract.prizePool();
+  protocol.save();
 
   lottery.startTimestamp = event.params.lotteryStart;
   lottery.amountDeposited = protocol.amountDeposited;
   lottery.reserve = protocol.reserve;
-  lottery.prizePool = protocol.prizePool;
+  lottery.prizePool = ZERO;
+  lottery.players = protocol.players;
   lottery.save();
 }
 
@@ -118,13 +123,13 @@ export function handleRandomNumberRequested(
 }
 
 export function handleLotteryWinnerAwarded(event: LotteryWinnerAwarded): void {
-  const contract = CompoundPrizeLottery.bind(event.address);
   const protocol = loadOrCreateProtocol();
   const lottery = loadOrCreateLottery(event.params.lotteryId.toString());
   const player = loadOrCreatePlayer(event.params.player);
   const win = loadOrCreateWin(event.transaction.hash);
 
-  protocol.prizePool = contract.prizePool();
+  protocol.prizePool = event.params.amount;
+  protocol.amountDeposited = protocol.amountDeposited.plus(protocol.prizePool);
   protocol.save();
 
   win.timestamp = event.params.lotteryEnd;
